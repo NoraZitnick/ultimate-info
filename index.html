@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team Map · Bay Area HS Ultimate</title>
+  <meta name="description" content="Map of every Bay Area high school ultimate frisbee team in BADA, BUYA and OAK.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="map">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header" data-site-header></header>
+
+  <main id="main" class="map-page">
+    <aside class="map-panel" aria-label="Filters and team list">
+      <div class="map-panel__intro">
+        <h1>Find a team near you</h1>
+        <p>Every high school ultimate team in the Bay Area. Dot color = league, letter = division.</p>
+      </div>
+
+      <div class="filter-block">
+        <h2 class="filter-block__title" id="gender-label">Show</h2>
+        <div class="segmented" data-filter="gender" role="group" aria-labelledby="gender-label">
+          <button type="button" data-value="all" aria-pressed="true">All</button>
+          <button type="button" data-value="girls" aria-pressed="false">Girls</button>
+          <button type="button" data-value="open" aria-pressed="false">Open</button>
+          <button type="button" data-value="mixed" aria-pressed="false">Mixed</button>
+        </div>
+      </div>
+
+      <div class="filter-block">
+        <h2 class="filter-block__title" id="league-label">Leagues</h2>
+        <div class="league-toggles" data-filter="league" role="group" aria-labelledby="league-label"></div>
+      </div>
+
+      <div class="filter-block">
+        <label class="filter-block__title" for="team-search">Search</label>
+        <input id="team-search" class="search-input" type="search" placeholder="Team, school or city…" autocomplete="off">
+      </div>
+
+      <p class="result-count" aria-live="polite" data-result-count></p>
+      <ul class="team-list" data-team-list></ul>
+    </aside>
+
+    <section class="map-wrap" aria-label="Map of teams">
+      <div id="map" class="map"></div>
+      <div class="map-legend" aria-hidden="true">
+        <span><i class="pin pin--bada pin--sm"></i>BADA</span>
+        <span><i class="pin pin--buya pin--sm"></i>BUYA</span>
+        <span><i class="pin pin--oak pin--sm"></i>OAK</span>
+        <span class="map-legend__key">G girls · O open · M mixed</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" data-site-footer></footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/map.js"></script>
+</body>
+</html>
