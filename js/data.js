@@ -8,24 +8,69 @@
  *  - Oakland Ultimate (oakultimate.com) winter, summer and fall program pages
  */
 
+/** Map categories: every league is either a high school league or a club program. */
+const CATEGORIES = {
+  school: { label: 'High school', note: 'School & community teams (BADA leagues)' },
+  club: { label: 'Club', note: 'Tryout-based BUYA & OAK teams' },
+};
+
 const LEAGUES = {
   bada: {
     name: 'BADA',
     fullName: 'Bay Area Disc Association',
+    category: 'school',
     blurb: 'School & community teams that play the Fall 5v5 and Spring leagues.',
     url: 'https://bayareadisc.org/youth-leagues',
   },
   buya: {
     name: 'BUYA',
     fullName: 'Bay Ultimate Youth',
+    category: 'club',
     blurb: 'Tryout-based club teams: Gold Rush, Cali Roll and the summer YCC teams.',
+    about: 'Founded in 2020 to bring the Bay Area’s winter club teams (Gold Rush & Cali Roll) and its summer YCC teams under one USA Ultimate affiliate. BUYA’s goal is to help players reach excellence on the field while growing as leaders and community builders.',
     url: 'https://www.bayultimateyouth.org/',
+    contacts: [
+      { label: 'Winter club', email: 'club@bayultimateyouth.org' },
+      { label: 'Summer YCC', email: 'ycc@bayultimateyouth.org' },
+    ],
+    /** Official BUYA pages (each links to that season's current registration form). */
+    registration: [
+      { label: 'Club teams overview', url: 'https://www.bayultimateyouth.org/club' },
+      { label: 'Gold Rush tryouts', url: 'https://www.bayultimateyouth.org/copy-of-club-tryouts-2026' },
+      { label: 'Cali Roll tryouts', url: 'https://www.bayultimateyouth.org/clubtryouts-2026caliroll' },
+      { label: 'YCC (summer) tryouts', url: 'https://www.bayultimateyouth.org/ycc-schedule' },
+      { label: 'Scholarships', url: 'https://www.bayultimateyouth.org/scholarship' },
+    ],
+    /** One map dot per club program, at its most common practice area. */
+    spot: {
+      name: 'Raimondi Field, Oakland',
+      note: 'Practices are mostly in the East Bay (with some on the Peninsula, South Bay and SF); 2026 Gold Rush tryouts were held here.',
+      lat: 37.8155,
+      lng: -122.2955,
+    },
   },
   oak: {
     name: 'OAK',
     fullName: 'Oakland Ultimate',
+    category: 'club',
     blurb: 'Tryout-based club teams: Storm, Frost, smOAK, Sparks, Embers and more.',
+    about: 'An Oakland-based youth program with a player-centered, team-focused approach. OAK runs development programs (Fall Mini League, free-agent teams) and competitive club teams in winter and summer — including smOAK, the 2025 & 2026 U20 Boys national champions.',
     url: 'https://www.oakultimate.com/home',
+    contacts: [{ label: 'General questions', email: 'operations@oakultimate.com' }],
+    /** Official OAK pages (each links to that season's current registration form). */
+    registration: [
+      { label: 'Registration (all programs)', url: 'https://www.oakultimate.com/registration' },
+      { label: 'Winter teams: Storm & Frost', url: 'https://www.oakultimate.com/winterprogram' },
+      { label: 'Summer YCC teams', url: 'https://www.oakultimate.com/summer' },
+      { label: 'Fall Mini League', url: 'https://www.oakultimate.com/fall' },
+      { label: 'Financial aid', url: 'https://www.oakultimate.com/financial-aid' },
+    ],
+    spot: {
+      name: 'Estuary Park, Oakland',
+      note: 'OAK’s home field for tryouts and its fall league; some practices are in Orinda.',
+      lat: 37.7886,
+      lng: -122.2622,
+    },
   },
 };
 
@@ -151,6 +196,7 @@ const OAK_LOCATION = {
  * @property {string} [joining]     Who can join
  * @property {{label:string, url:string}[]} [links]
  * @property {string} [squads]      Sub-teams inside the program
+ * @property {string[]} [affiliations] Every program a joint team belongs to (defaults to [league])
  */
 
 /** @type {Team[]} */
@@ -634,22 +680,6 @@ const TEAMS = [
     joining: 'Tryout required',
     links: BUYA_YCC_LINKS,
   },
-  {
-    id: 'belly-of-the-beast',
-    name: 'Belly of the Beast',
-    program: 'Bay Ultimate Youth (BUYA)',
-    league: 'buya',
-    gender: 'girls',
-    type: 'Club team (tryout)',
-    ages: 'Under 17 (girls / Gx division)',
-    divisions: ['yccU17'],
-    location: BUYA_YCC_LOCATION,
-    practice: BUYA_YCC_PRACTICE,
-    vibe: 'The U17 girls’ summer team — 2024 YCC national champions and 2018 Spirit Award winners. Fierce on the field, kind off it.',
-    contact: { name: 'BUYA YCC', email: BUYA_YCC_EMAIL },
-    joining: 'Tryout required',
-    links: BUYA_YCC_LINKS,
-  },
 
   /* ---------- OAK: club teams ---------- */
   {
@@ -769,18 +799,19 @@ const TEAMS = [
   {
     id: 'flaming-hydras',
     name: 'Flaming Hydras',
-    program: 'Oakland Ultimate (OAK) with BUYA',
+    program: 'Joint OAK & BUYA team',
     league: 'oak',
+    affiliations: ['oak', 'buya'],
     gender: 'girls',
     type: 'Club team (tryout)',
     ages: 'Under 17 (girls / Gx division)',
     divisions: ['yccU17'],
     location: OAK_LOCATION,
     practice: OAK_SUMMER_PRACTICE,
-    vibe: 'A brand-new (2026) U17 girls’ team formed together with BUYA — more spots for younger girls to play summer club.',
-    contact: { name: 'OAK Operations', email: OAK_EMAIL },
-    joining: 'Tryout required',
-    links: OAK_SUMMER_LINKS,
+    vibe: 'The Bay’s U17 girls’ summer team, run jointly by OAK and BUYA since 2026 (BUYA’s U17 girls previously played as Belly of the Beast, 2024 YCC champions). Fierce on the field, kind off it.',
+    contact: { name: 'OAK Operations · BUYA YCC', email: OAK_EMAIL },
+    joining: 'Tryout required (through OAK or BUYA)',
+    links: [...OAK_SUMMER_LINKS, ...BUYA_YCC_LINKS],
   },
   {
     id: 'oak-fall-mini',

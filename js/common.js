@@ -32,8 +32,21 @@ const Site = (() => {
     return SEASON_LINKS[DIVISIONS[divisionKey].season];
   }
 
+  function orgUrl(leagueKey) {
+    return `org.html?org=${encodeURIComponent(leagueKey)}`;
+  }
+
   function findTeam(id) {
     return TEAMS.find((team) => team.id === id) ?? null;
+  }
+
+  /** Every program a team belongs to (joint teams list more than one). */
+  function teamOrgs(team) {
+    return team.affiliations ?? [team.league];
+  }
+
+  function orgTeams(leagueKey) {
+    return TEAMS.filter((team) => teamOrgs(team).includes(leagueKey));
   }
 
   /**
@@ -44,7 +57,7 @@ const Site = (() => {
     const needle = query.trim().toLowerCase();
     return teams.filter((team) => {
       if (gender !== 'all' && team.gender !== gender) return false;
-      if (leagues && !leagues.has(team.league)) return false;
+      if (leagues && !teamOrgs(team).some((key) => leagues.has(key))) return false;
       if (!needle) return true;
       const haystack = [team.name, team.program, team.location.name, LEAGUES[team.league].name]
         .join(' ')
@@ -58,6 +71,10 @@ const Site = (() => {
     return `<span class="badge badge--${leagueKey}" title="${escapeHtml(league.fullName)}">${escapeHtml(league.name)}</span>`;
   }
 
+  function orgBadges(team) {
+    return teamOrgs(team).map(leagueBadge).join('');
+  }
+
   function genderBadge(genderKey) {
     return `<span class="badge badge--gender">${escapeHtml(GENDERS[genderKey].label)}</span>`;
   }
@@ -67,12 +84,15 @@ const Site = (() => {
     return `<a class="chip chip--${division.season}" href="${divisionUrl(divisionKey)}">${escapeHtml(division.label)}</a>`;
   }
 
-  /** Adds the shared OpenStreetMap base layer to a Leaflet map. */
+  /** Adds the shared basemap (soft light-gray base + separate label layer) to a Leaflet map. */
   function addBaseLayer(map) {
-    return L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 18,
+    const esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas';
+    const options = { maxZoom: 16, keepBuffer: 4 };
+    L.tileLayer(`${esri}/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`, {
+      ...options,
+      attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors',
     }).addTo(map);
+    L.tileLayer(`${esri}/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}`, options).addTo(map);
   }
 
   /** Wires a group of [data-value] toggle buttons that behave like radio buttons. */
@@ -140,10 +160,14 @@ const Site = (() => {
   return {
     escapeHtml,
     teamUrl,
+    orgUrl,
     divisionUrl,
     findTeam,
+    teamOrgs,
+    orgTeams,
     filterTeams,
     leagueBadge,
+    orgBadges,
     genderBadge,
     divisionChip,
     addBaseLayer,

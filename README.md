@@ -9,7 +9,8 @@ Open `index.html` in a browser — no build step or server required.
 
 | Page | File | What it does |
 | --- | --- | --- |
-| Team Map | `index.html` | Leaflet map; dot color = league (BADA / BUYA / OAK), letter = division. Filter by Girls / Open / Mixed, league, or search. |
+| Team Map | `index.html` | Leaflet map: green dots = high school teams (letter = division), one blue dot per club program (BUYA, OAK) at its main practice area. Filter by Girls / Open / Mixed, team type, or search. Zoom is limited to the Bay Area. |
+| Club Program | `org.html?org=buya` / `?org=oak` | Every team in that program, grouped by season, with ages; practice area, registration pages, contacts. Opened by clicking a club dot. |
 | Team Lookup | `team.html` | Without `?id=`: searchable directory. With `?id=<team-id>`: team page with location, schedule, vibe, contact. Division chips link to the Seasons page. |
 | Seasons | `seasons.html` | Fall developmental, spring single-gender and summer club seasons, with events and dates (`#fall`, `#spring`, `#summer`, `#winter`). |
 | Club Teams | `clubs.html` | How club works, BUYA and OAK programs, their teams, schedules, and tryout links. |
@@ -22,7 +23,8 @@ js/data.js       LEAGUES, GENDERS, DIVISIONS, TEAMS — the only place team info
 js/common.js     Site helpers: header/footer, escaping, filtering, badges
 js/map.js        map page
 js/team.js       team lookup page
-js/clubs.js      renders club team cards from data
+js/clubs.js      renders club team cards + registration links from data
+js/org.js        club program page
 ```
 
 ## Code practices
@@ -39,8 +41,8 @@ js/clubs.js      renders club team cards from data
    in `:root`.
 6. **Small, named functions** with a single job; `const` by default; strict mode in each IIFE so
    page scripts don't leak globals.
-7. **No build, few dependencies.** Plain HTML/CSS/JS plus Leaflet (pinned version from cdnjs) and
-   Google Fonts. Works straight from the file system.
+7. **No build, few dependencies.** Plain HTML/CSS/JS plus Leaflet (pinned version from cdnjs), Esri's
+   keyless light-gray basemap tiles and Google Fonts. Works straight from the file system.
 8. **Honest data.** Sources and a "last checked" date are shown in the footer; dates are given as
    approximate windows with the most recent known dates in parentheses.
 

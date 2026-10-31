@@ -15,10 +15,14 @@
   --bg: #f4f7fb;
   --focus: #ffb703;
 
-  /* Leagues (dot colors) */
-  --bada: #e8513a;
-  --buya: #3567e8;
-  --oak: #129b52;
+  /* Map categories: high school = green, club = blue */
+  --school: #16a05a;
+  --club: #2f6fe4;
+
+  /* Leagues (badges) — BADA is high school, BUYA/OAK are club */
+  --bada: var(--school);
+  --buya: var(--club);
+  --oak: #1b48b8;
 
   /* Seasons */
   --fall: #c2560c;
@@ -179,6 +183,7 @@ img { max-width: 100%; }
 .badge--bada { background: var(--bada); }
 .badge--buya { background: var(--buya); }
 .badge--oak { background: var(--oak); }
+.badge--school { background: var(--school); }
 .badge--gender { background: var(--sky); color: var(--navy); }
 .badge--ghost { background: rgb(255 255 255 / 16%); color: inherit; border: 1px solid rgb(255 255 255 / 35%); }
 
@@ -231,10 +236,16 @@ img { max-width: 100%; }
   font-size: .72rem; font-weight: 800; font-style: normal; line-height: 1;
   transition: transform .15s;
 }
-.pin--bada { --pin: var(--bada); }
-.pin--buya { --pin: var(--buya); }
-.pin--oak { --pin: var(--oak); }
+.pin--school { --pin: var(--school); }
+.pin--club { --pin: var(--club); }
 .pin--sm { width: 20px; height: 20px; font-size: .62rem; border-width: 2px; flex: none; }
+.pin--org {
+  width: 58px; height: 30px; border-radius: 999px; border-width: 3px;
+  font-size: .78rem; letter-spacing: .06em; cursor: pointer;
+}
+.pin--org-sm { width: 44px; height: 22px; font-size: .62rem; border-width: 2px; flex: none; }
+
+.leaflet-tooltip { font-family: var(--font); border-radius: var(--radius-sm); box-shadow: var(--shadow); }
 
 .leaflet-marker-icon:hover .pin,
 .leaflet-marker-icon.is-highlighted .pin { transform: scale(1.35); }
@@ -244,7 +255,7 @@ img { max-width: 100%; }
 .map-page { display: flex; flex-direction: column; }
 
 .map-wrap { position: relative; order: -1; }
-.map { height: 58vh; min-height: 340px; background: #dfe7ef; }
+.map { height: 58vh; min-height: 340px; background: #e9ecef; }
 
 .map-legend {
   position: absolute; left: 10px; bottom: 22px; z-index: 500;
@@ -282,6 +293,10 @@ img { max-width: 100%; }
 .team-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
 .team-list li { display: flex; align-items: stretch; gap: 4px; }
 .team-list__empty { padding: 16px; color: var(--ink-soft); }
+.team-list li.team-list__heading {
+  display: block; margin-top: 10px; padding: 4px 10px;
+  font-size: .75rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft);
+}
 
 .team-row {
   flex: 1; display: flex; align-items: center; gap: 10px; min-width: 0;
@@ -364,6 +379,14 @@ img { max-width: 100%; }
 .team-card__badges { display: flex; gap: 6px; margin-bottom: 4px; }
 .team-card__name { font-weight: 800; font-size: 1.08rem; }
 .team-card__meta { color: var(--ink-soft); font-size: .88rem; }
+.team-card__ages { font-weight: 700; color: var(--navy-2); }
+
+.badge--ghost-dark { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+.club-season__header .chip { margin-left: auto; }
+.club-season__header { flex-wrap: wrap; }
+.org-contact { margin-bottom: 12px; }
+.link-buttons--center { justify-content: center; }
+.register-grid__org { margin-left: 8px; font-size: .85rem; }
 
 /* ---------- Team lookup ---------- */
 

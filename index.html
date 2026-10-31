@@ -19,7 +19,7 @@
     <aside class="map-panel" aria-label="Filters and team list">
       <div class="map-panel__intro">
         <h1>Find a team near you</h1>
-        <p>Every high school ultimate team in the Bay Area. Dot color = league, letter = division.</p>
+        <p>Green dots are high school teams (letter = division). Blue dots are the BUYA and OAK club programs — click one to see all its teams.</p>
       </div>
 
       <div class="filter-block">
@@ -33,8 +33,8 @@
       </div>
 
       <div class="filter-block">
-        <h2 class="filter-block__title" id="league-label">Leagues</h2>
-        <div class="league-toggles" data-filter="league" role="group" aria-labelledby="league-label"></div>
+        <h2 class="filter-block__title" id="category-label">Team type</h2>
+        <div class="league-toggles" data-filter="category" role="group" aria-labelledby="category-label"></div>
       </div>
 
       <div class="filter-block">
@@ -49,9 +49,8 @@
     <section class="map-wrap" aria-label="Map of teams">
       <div id="map" class="map"></div>
       <div class="map-legend" aria-hidden="true">
-        <span><i class="pin pin--bada pin--sm"></i>BADA</span>
-        <span><i class="pin pin--buya pin--sm"></i>BUYA</span>
-        <span><i class="pin pin--oak pin--sm"></i>OAK</span>
+        <span><i class="pin pin--school pin--sm"></i>High school</span>
+        <span><i class="pin pin--club pin--sm"></i>Club</span>
         <span class="map-legend__key">G girls · O open · M mixed</span>
       </div>
     </section>

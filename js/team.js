@@ -19,7 +19,7 @@
     return `
       <li>
         <a class="team-card team-card--${team.league}" href="${Site.teamUrl(team)}">
-          <span class="team-card__badges">${Site.leagueBadge(team.league)}${Site.genderBadge(team.gender)}</span>
+          <span class="team-card__badges">${Site.orgBadges(team)}${Site.genderBadge(team.gender)}</span>
           <span class="team-card__name">${esc(team.name)}</span>
           <span class="team-card__meta">${esc(team.program)}</span>
           <span class="team-card__meta">📍 ${esc(team.location.name)}</span>
@@ -51,7 +51,8 @@
         ${Object.keys(LEAGUES).map((key) => `
           <section class="directory-group" data-group="${key}">
             <h2 class="directory-group__title">${Site.leagueBadge(key)} ${esc(LEAGUES[key].fullName)}</h2>
-            <p class="directory-group__blurb">${esc(LEAGUES[key].blurb)}</p>
+            <p class="directory-group__blurb">${esc(LEAGUES[key].blurb)}
+              ${LEAGUES[key].category === 'club' ? `<a class="text-link" href="${Site.orgUrl(key)}">See all ${esc(LEAGUES[key].name)} teams &amp; ages →</a>` : ''}</p>
             <ul class="card-grid" data-cards></ul>
           </section>`).join('')}
       </div>`;
@@ -64,7 +65,7 @@
       const visible = Site.filterTeams(TEAMS, state);
       count.textContent = `Showing ${visible.length} of ${TEAMS.length} teams`;
       root.querySelectorAll('[data-group]').forEach((group) => {
-        const teams = visible.filter((team) => team.league === group.dataset.group);
+        const teams = visible.filter((team) => Site.teamOrgs(team).includes(group.dataset.group));
         group.hidden = teams.length === 0;
         group.querySelector('[data-cards]').innerHTML = teams.map(teamCard).join('');
       });
@@ -85,6 +86,18 @@
 
   function factRow(label, valueHtml) {
     return `<div class="fact"><dt>${label}</dt><dd>${valueHtml}</dd></div>`;
+  }
+
+  /** Club programs link to their org page; BADA links to its league site. */
+  function orgLinks(team) {
+    return Site.teamOrgs(team)
+      .map((key) => {
+        const org = LEAGUES[key];
+        return org.category === 'club'
+          ? `<a href="${Site.orgUrl(key)}">${esc(org.fullName)}</a>`
+          : `${esc(org.fullName)} (<a href="${esc(org.url)}" target="_blank" rel="noopener">site ↗</a>)`;
+      })
+      .join(' &amp; ');
   }
 
   function seasonList(team) {
@@ -114,7 +127,7 @@
       <section class="hero hero--team hero--${team.league}">
         <div class="container">
           <a class="back-link" href="team.html">← All teams</a>
-          <div class="hero__badges">${Site.leagueBadge(team.league)}${Site.genderBadge(team.gender)}<span class="badge badge--ghost">${esc(team.type)}</span></div>
+          <div class="hero__badges">${Site.orgBadges(team)}${Site.genderBadge(team.gender)}<span class="badge badge--ghost">${esc(team.type)}</span></div>
           <h1>${esc(team.name)}</h1>
           <p class="hero__lead">${esc(team.program)}</p>
         </div>
@@ -157,7 +170,7 @@
               ${factRow('Division', esc(GENDERS[team.gender].label) + ` <span class="muted">— ${esc(GENDERS[team.gender].note)}</span>`)}
               ${factRow('Type', esc(team.type))}
               ${factRow('Ages', esc(team.ages))}
-              ${factRow('League', `${esc(LEAGUES[team.league].fullName)} (<a href="${esc(LEAGUES[team.league].url)}" target="_blank" rel="noopener">site ↗</a>)`)}
+              ${factRow(LEAGUES[team.league].category === 'club' ? 'Program' : 'League', orgLinks(team))}
               ${team.joining ? factRow('Who can join', esc(team.joining)) : ''}
             </dl>
           </section>
@@ -177,7 +190,7 @@
     L.marker([location.lat, location.lng], {
       icon: L.divIcon({
         className: 'pin-anchor',
-        html: `<span class="pin pin--${team.league}">${GENDERS[team.gender].short}</span>`,
+        html: `<span class="pin pin--${LEAGUES[team.league].category}">${GENDERS[team.gender].short}</span>`,
         iconSize: [26, 26],
         iconAnchor: [13, 13],
       }),
