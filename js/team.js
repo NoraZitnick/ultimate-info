@@ -18,11 +18,10 @@
   function teamCard(team) {
     return `
       <li>
-        <a class="team-card team-card--${team.league}" href="${Site.teamUrl(team)}">
+        <a class="team-card team-card--${Site.teamColor(team)}" href="${Site.teamUrl(team)}">
           <span class="team-card__badges">${Site.orgBadges(team)}${Site.genderBadge(team.gender)}</span>
           <span class="team-card__name">${esc(team.name)}</span>
-          <span class="team-card__meta">${esc(team.program)}</span>
-          <span class="team-card__meta">📍 ${esc(team.location.name)}</span>
+          <span class="team-card__meta">${esc(Site.teamSeasons(team))}</span>
         </a>
       </li>`;
   }
@@ -34,7 +33,7 @@
         <div class="container">
           <p class="eyebrow">Team Lookup</p>
           <h1>Every Bay Area high school team</h1>
-          <p class="hero__lead">Search by team, school or city, then tap a team for practice times, location and contact info.</p>
+          <p class="hero__lead">Search by team, school or city.</p>
         </div>
       </section>
       <div class="container">
@@ -100,6 +99,13 @@
       .join(' &amp; ');
   }
 
+  function leagueStatus(team) {
+    const note = team.inLeague === false
+      ? 'Not registered in the 2026 BADA leagues. Email the team to ask if they’re playing this season.'
+      : team.leagueNote ?? 'Registered in the 2026 BADA leagues.';
+    return `${Site.leagueStatusBadge(team)} <span class="muted">${esc(note)}</span>`;
+  }
+
   function seasonList(team) {
     return team.divisions
       .map((key) => `<li>${Site.divisionChip(key)}<span class="season-when">${esc(DIVISIONS[key].when)}</span></li>`)
@@ -124,7 +130,7 @@
     const mailSubject = encodeURIComponent(`Interested in ${team.name}`);
 
     root.innerHTML = `
-      <section class="hero hero--team hero--${team.league}">
+      <section class="hero hero--team hero--${Site.teamColor(team)}">
         <div class="container">
           <a class="back-link" href="team.html">← All teams</a>
           <div class="hero__badges">${Site.orgBadges(team)}${Site.genderBadge(team.gender)}<span class="badge badge--ghost">${esc(team.type)}</span></div>
@@ -136,14 +142,14 @@
       <div class="container team-layout">
         <div class="team-main">
           <section class="panel">
-            <h2 class="panel__title">The vibe</h2>
+            <h2 class="panel__title">About</h2>
             <p class="vibe">${esc(team.vibe)}</p>
             ${team.squads ? `<p class="muted"><strong>Squads:</strong> ${esc(team.squads)}</p>` : ''}
           </section>
 
           <section class="panel">
             <h2 class="panel__title">Division &amp; season</h2>
-            <p class="muted">Tap a division to see how that season works.</p>
+            <p class="muted">Click a division to see that season.</p>
             <ul class="season-list">${seasonList(team)}</ul>
           </section>
 
@@ -167,10 +173,11 @@
           <section class="panel">
             <h2 class="panel__title">Quick facts</h2>
             <dl class="facts">
-              ${factRow('Division', esc(GENDERS[team.gender].label) + ` <span class="muted">— ${esc(GENDERS[team.gender].note)}</span>`)}
+              ${factRow('Division', esc(GENDERS[team.gender].label) + ` <span class="muted">(${esc(GENDERS[team.gender].note)})</span>`)}
               ${factRow('Type', esc(team.type))}
               ${factRow('Ages', esc(team.ages))}
               ${factRow(LEAGUES[team.league].category === 'club' ? 'Program' : 'League', orgLinks(team))}
+              ${LEAGUES[team.league].category === 'school' ? factRow('League status', leagueStatus(team)) : ''}
               ${team.joining ? factRow('Who can join', esc(team.joining)) : ''}
             </dl>
           </section>
@@ -190,7 +197,7 @@
     L.marker([location.lat, location.lng], {
       icon: L.divIcon({
         className: 'pin-anchor',
-        html: `<span class="pin pin--${LEAGUES[team.league].category}">${GENDERS[team.gender].short}</span>`,
+        html: `<span class="pin pin--${LEAGUES[team.league].category === 'club' ? Site.teamColor(team) : Site.schoolStatus(team)}">${GENDERS[team.gender].short}</span>`,
         iconSize: [26, 26],
         iconAnchor: [13, 13],
       }),

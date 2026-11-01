@@ -14,10 +14,10 @@
   }
 
   function clubCard(team, league) {
-    const joint = Site.teamOrgs(team).length > 1 ? '<span class="badge badge--ghost-dark">OAK + BUYA</span>' : '';
+    const joint = Site.teamOrgs(team).length > 1 ? '<span class="badge badge--joint">OAK + BUYA</span>' : '';
     return `
       <li>
-        <a class="team-card team-card--${league}" href="${Site.teamUrl(team)}">
+        <a class="team-card team-card--${Site.teamColor(team)}" href="${Site.teamUrl(team)}">
           <span class="team-card__badges">${Site.genderBadge(team.gender)}${joint}</span>
           <span class="team-card__name">${esc(team.name)}</span>
           <span class="team-card__meta">${esc(team.ages)}</span>

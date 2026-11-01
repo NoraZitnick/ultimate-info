@@ -46,8 +46,13 @@
     wheelDebounceTime: 30,
     maxBounds: teamBounds.pad(0.6),
     maxBoundsViscosity: 1,
-    inertiaDeceleration: 2500,
+    inertia: false,
+    bounceAtZoomLimits: false,
   });
+  // Leaflet animates the map back inside maxBounds after a move (a "bounce"); snap instead
+  // so the edge simply stops the map.
+  map.off('moveend', map._panInsideMaxBounds);
+  map.on('moveend', () => map.panInsideBounds(map.options.maxBounds, { animate: false }));
   Site.addBaseLayer(map);
 
   /** Lets users zoom out only slightly past the view that fits every team. */
@@ -87,7 +92,7 @@
     const half = PIN_SIZE / 2;
     return L.divIcon({
       className: 'pin-anchor',
-      html: `<span class="pin pin--school">${GENDERS[team.gender].short}</span>`,
+      html: `<span class="pin pin--${Site.schoolStatus(team)}">${GENDERS[team.gender].short}</span>`,
       iconSize: [PIN_SIZE, PIN_SIZE],
       iconAnchor: [half - dx, half - dy],
       popupAnchor: [dx, dy - half],
@@ -98,7 +103,7 @@
     const [dx, dy] = CLUB_PIN_NUDGE[key] ?? [0, 0];
     return L.divIcon({
       className: 'pin-anchor',
-      html: `<span class="pin pin--club pin--org">${esc(LEAGUES[key].name)}</span>`,
+      html: `<span class="pin pin--${key} pin--org">${esc(LEAGUES[key].name)}</span>`,
       iconSize: [58, 30],
       iconAnchor: [29 - dx, 15 - dy],
       tooltipAnchor: [dx, dy - 15],
@@ -108,7 +113,7 @@
   function schoolPopup(team) {
     return `
       <div class="popup">
-        <div class="popup__badges"><span class="badge badge--school">High school</span>${Site.genderBadge(team.gender)}</div>
+        <div class="popup__badges">${Site.leagueStatusBadge(team)}${Site.genderBadge(team.gender)}</div>
         <h3 class="popup__title">${esc(team.name)}</h3>
         <p class="popup__meta">${esc(team.program)}</p>
         <p class="popup__meta">📍 ${esc(team.location.name)}</p>
@@ -135,11 +140,11 @@
     const marker = L.marker([org.spot.lat, org.spot.lng], {
       icon: clubIcon(key),
       title: `${org.fullName}: see all ${count} teams`,
-      alt: `${org.fullName} club teams`,
+      alt: `${org.fullName} Club teams`,
       riseOnHover: true,
       zIndexOffset: 500,
     })
-      .bindTooltip(`<strong>${esc(org.fullName)}</strong><br>${count} club teams · click to see them all`, {
+      .bindTooltip(`<strong>${esc(org.fullName)}</strong><br>${count} Club teams · click to see them all`, {
         direction: 'top',
       })
       .on('click', () => window.location.assign(Site.orgUrl(key)));
@@ -149,8 +154,9 @@
   /* ---------- Filtering ---------- */
 
   function visibleSchoolTeams() {
-    if (!state.categories.has('school')) return [];
-    return Site.filterTeams(schoolTeams, state);
+    const statusGroup = { school: 'league', inactive: 'nonleague' };
+    return Site.filterTeams(schoolTeams, state)
+      .filter((team) => state.categories.has(statusGroup[Site.schoolStatus(team)]));
   }
 
   /** A club dot shows when any of its teams matches the gender filter and the search. */
@@ -183,10 +189,10 @@
     return `
       <li>
         <a class="team-row" href="${Site.orgUrl(key)}" data-marker="org:${key}">
-          <span class="pin pin--club pin--org pin--org-sm" aria-hidden="true">${esc(org.name)}</span>
+          <span class="pin pin--${key} pin--org pin--org-sm" aria-hidden="true">${esc(org.name)}</span>
           <span class="team-row__text">
             <span class="team-row__name">${esc(org.fullName)}</span>
-            <span class="team-row__meta">${teams.length} club teams · ${esc(org.spot.name)}</span>
+            <span class="team-row__meta">${teams.length} Club teams · ${esc(org.spot.name)}</span>
           </span>
         </a>
         <button class="team-row__locate" type="button" data-locate="org:${key}" aria-label="Show ${esc(org.fullName)} on map">⌖</button>
@@ -197,10 +203,10 @@
     return `
       <li>
         <a class="team-row" href="${Site.teamUrl(team)}" data-marker="${esc(team.id)}">
-          <span class="pin pin--school pin--sm" aria-hidden="true">${GENDERS[team.gender].short}</span>
+          <span class="pin pin--${Site.schoolStatus(team)} pin--sm" aria-hidden="true">${GENDERS[team.gender].short}</span>
           <span class="team-row__text">
             <span class="team-row__name">${esc(team.name)}</span>
-            <span class="team-row__meta">${esc(GENDERS[team.gender].label)} · ${esc(team.location.name)}</span>
+            <span class="team-row__meta">${esc(GENDERS[team.gender].label)} · ${team.inLeague === false ? 'Non-league · ' : ''}${esc(team.location.name)}</span>
           </span>
         </a>
         <button class="team-row__locate" type="button" data-locate="${esc(team.id)}" aria-label="Show ${esc(team.name)} on map">⌖</button>
@@ -224,7 +230,7 @@
       else marker.remove();
     });
 
-    const clubCount = orgs.length ? ` + ${orgs.length} club program${orgs.length > 1 ? 's' : ''}` : '';
+    const clubCount = orgs.length ? ` + ${orgs.length} Club program${orgs.length > 1 ? 's' : ''}` : '';
     els.count.textContent = `Showing ${teams.length} high school team${teams.length === 1 ? '' : 's'}${clubCount}`;
     renderList(orgs, teams);
   }
@@ -236,7 +242,7 @@
       .map(
         ([key, category]) => `
         <button type="button" class="league-toggle" data-category="${key}" aria-pressed="true">
-          <span class="pin pin--${key} pin--sm" aria-hidden="true"></span>
+          <span class="pin pin--${category.pin} pin--sm" aria-hidden="true"></span>
           <span><strong>${esc(category.label)}</strong> <small>${esc(category.note)}</small></span>
         </button>`,
       )

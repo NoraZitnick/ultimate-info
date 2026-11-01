@@ -9,11 +9,12 @@ Open `index.html` in a browser — no build step or server required.
 
 | Page | File | What it does |
 | --- | --- | --- |
-| Team Map | `index.html` | Leaflet map: green dots = high school teams (letter = division), one blue dot per club program (BUYA, OAK) at its main practice area. Filter by Girls / Open / Mixed, team type, or search. Zoom is limited to the Bay Area. |
+| Home | `index.html` | Landing page: what the site is for, how to use Team Lookup, and who BADA GURLS are. |
+| Team Map | `map.html` | Colored street map: green = high school team in a 2026 BADA league, amber = high school team not in a league this year, blue = one dot per Club program (BUYA, OAK). Filter by Girls / Open / Mixed, team type, or search. Zoom and panning stop at the Bay Area edge. |
 | Club Program | `org.html?org=buya` / `?org=oak` | Every team in that program, grouped by season, with ages; practice area, registration pages, contacts. Opened by clicking a club dot. |
 | Team Lookup | `team.html` | Without `?id=`: searchable directory. With `?id=<team-id>`: team page with location, schedule, vibe, contact. Division chips link to the Seasons page. |
-| Seasons | `seasons.html` | Fall developmental, spring single-gender and summer club seasons, with events and dates (`#fall`, `#spring`, `#summer`, `#winter`). |
-| Club Teams | `clubs.html` | How club works, BUYA and OAK programs, their teams, schedules, and tryout links. |
+| Seasons | `seasons.html` | Fall, Winter Club, Spring and Summer Club in order, each with the same fact sheet (from `SEASON_FACTS` in `js/data.js`) plus events and dates. Timeline bars jump to each season. |
+| Club Teams | `clubs.html` | Buttons to the BUYA and OAK program pages, how Club works, the teams, schedules, and registration links. |
 
 ## Code structure
 
@@ -24,7 +25,9 @@ js/common.js     Site helpers: header/footer, escaping, filtering, badges
 js/map.js        map page
 js/team.js       team lookup page
 js/clubs.js      renders club team cards + registration links from data
-js/org.js        club program page
+js/org.js        Club program page
+js/seasons.js    season fact sheets
+images/logos/    BUYA and OAK logos (from each program's website)
 ```
 
 ## Code practices
@@ -42,7 +45,7 @@ js/org.js        club program page
 6. **Small, named functions** with a single job; `const` by default; strict mode in each IIFE so
    page scripts don't leak globals.
 7. **No build, few dependencies.** Plain HTML/CSS/JS plus Leaflet (pinned version from cdnjs), Esri's
-   keyless light-gray basemap tiles and Google Fonts. Works straight from the file system.
+   keyless street-map tiles and Google Fonts. Works straight from the file system.
 8. **Honest data.** Sources and a "last checked" date are shown in the footer; dates are given as
    approximate windows with the most recent known dates in parentheses.
 

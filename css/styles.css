@@ -17,12 +17,15 @@
 
   /* Map categories: high school = green, club = blue */
   --school: #16a05a;
+  --inactive: #e39a12;
   --club: #2f6fe4;
 
   /* Leagues (badges) — BADA is high school, BUYA/OAK are club */
   --bada: var(--school);
   --buya: var(--club);
-  --oak: #1b48b8;
+  --oak: #d63b3b;
+  /* Shared BUYA + OAK teams blend both colors through a soft violet. */
+  --joint: linear-gradient(90deg, var(--buya) 0%, #8a4fd8 50%, var(--oak) 100%);
 
   /* Seasons */
   --fall: #c2560c;
@@ -183,7 +186,9 @@ img { max-width: 100%; }
 .badge--bada { background: var(--bada); }
 .badge--buya { background: var(--buya); }
 .badge--oak { background: var(--oak); }
+.badge--joint { background: var(--joint); }
 .badge--school { background: var(--school); }
+.badge--inactive { background: var(--inactive); color: var(--navy); }
 .badge--gender { background: var(--sky); color: var(--navy); }
 .badge--ghost { background: rgb(255 255 255 / 16%); color: inherit; border: 1px solid rgb(255 255 255 / 35%); }
 
@@ -237,7 +242,11 @@ img { max-width: 100%; }
   transition: transform .15s;
 }
 .pin--school { --pin: var(--school); }
-.pin--club { --pin: var(--club); }
+.pin--club { background: linear-gradient(135deg, var(--buya) 50%, var(--oak) 50%); }
+.pin--buya { --pin: var(--buya); }
+.pin--oak { --pin: var(--oak); }
+.pin--joint { background: var(--joint); }
+.pin--inactive { --pin: var(--inactive); }
 .pin--sm { width: 20px; height: 20px; font-size: .62rem; border-width: 2px; flex: none; }
 .pin--org {
   width: 58px; height: 30px; border-radius: 999px; border-width: 3px;
@@ -343,13 +352,14 @@ img { max-width: 100%; }
 .hero--team { padding-top: 20px; }
 .hero--bada { background: linear-gradient(135deg, var(--navy) 30%, var(--bada) 160%); }
 .hero--buya { background: linear-gradient(135deg, var(--navy) 30%, var(--buya) 140%); }
+.hero--inactive { background: linear-gradient(135deg, var(--navy) 30%, var(--inactive) 170%); }
 .hero--oak { background: linear-gradient(135deg, var(--navy) 30%, var(--oak) 150%); }
+.hero--joint { background: linear-gradient(135deg, var(--navy) 35%, #2a3f9e 70%, #6a2f7a 95%, #9b2f3f 120%); }
 .hero__badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 10px; }
 
 .back-link { color: #d6e2f3; font-weight: 700; text-decoration: none; }
 .back-link:hover { color: #fff; text-decoration: underline; }
 
-.season-jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 
 /* ---------- Panels & cards ---------- */
 
@@ -376,6 +386,8 @@ img { max-width: 100%; }
 .team-card--bada { --accent: var(--bada); }
 .team-card--buya { --accent: var(--buya); }
 .team-card--oak { --accent: var(--oak); }
+.team-card--inactive { --accent: var(--inactive); }
+.team-card--joint { --accent: #8a4fd8; border-top: 0; padding-top: 21px; background: var(--joint) top / 100% 5px no-repeat, var(--surface); }
 .team-card__badges { display: flex; gap: 6px; margin-bottom: 4px; }
 .team-card__name { font-weight: 800; font-size: 1.08rem; }
 .team-card__meta { color: var(--ink-soft); font-size: .88rem; }
@@ -445,7 +457,9 @@ img { max-width: 100%; }
   grid-column: calc(var(--start) + 1) / calc(var(--end) + 1); grid-row: 1;
   padding: 6px 10px; border-radius: 999px; color: #fff;
   font-size: .78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  text-decoration: none; transition: filter .15s, transform .15s;
 }
+a.timeline__bar:hover { color: #fff; filter: brightness(1.12); transform: translateY(-1px); }
 .timeline__bar--fall { background: var(--fall); }
 .timeline__bar--spring { background: var(--spring); }
 .timeline__bar--summer { background: var(--summer); }
@@ -504,7 +518,10 @@ img { max-width: 100%; }
 }
 
 .link-row { display: flex; flex-wrap: wrap; gap: 18px; }
-.season--mini .season__body p { max-width: 75ch; }
+.season__intro { max-width: 75ch; }
+
+.fact-pills { margin: 12px 0 4px; }
+.fact-pills__label { font-weight: 800; color: var(--accent); margin-right: 2px; }
 
 /* ---------- Clubs ---------- */
 
@@ -563,4 +580,84 @@ img { max-width: 100%; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* ---------- Home ---------- */
+
+.hero--home { padding: 56px 0 52px; margin-bottom: 32px; }
+.hero-home { display: grid; gap: 32px; align-items: center; }
+.hero-home__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.hero-home__disc {
+  display: none; justify-self: center; width: 240px; height: 240px; border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 18%, var(--focus) 19% 55%, #fff 56% 62%, var(--focus) 63%);
+  box-shadow: 0 18px 40px rgb(0 0 0 / 35%); transform: rotate(-14deg);
+}
+@media (min-width: 860px) {
+  .hero-home { grid-template-columns: 1fr 280px; }
+  .hero-home__disc { display: block; }
+}
+
+.btn--accent { background: var(--focus); color: var(--navy); }
+.btn--accent:hover { background: #ffc933; color: var(--navy); }
+.btn--outline { background: transparent; border: 2px solid rgb(255 255 255 / 60%); }
+.btn--outline:hover { background: rgb(255 255 255 / 12%); }
+
+.about { margin: 36px 0; }
+.about__grid { display: grid; gap: 20px; }
+@media (min-width: 860px) { .about__grid { grid-template-columns: 3fr 2fr; align-items: start; } }
+.about__callout { font-family: var(--font-display); font-size: 1.2rem; color: var(--club); }
+
+.mission {
+  margin: 0; padding: 24px 28px; border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%); color: #fff;
+}
+.mission .eyebrow { color: var(--focus); }
+.mission p:last-child { margin: 0; font-size: 1.2rem; max-width: 65ch; }
+
+.explore-grid {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+.explore-card {
+  display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 18px;
+  background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow);
+  color: var(--ink); text-decoration: none; transition: transform .15s, box-shadow .15s;
+}
+.explore-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgb(13 35 64 / 14%); color: var(--ink); }
+.explore-card__icon { font-size: 1.6rem; }
+.explore-card strong { font-size: 1.08rem; }
+.explore-card span:last-child { color: var(--ink-soft); font-size: .92rem; }
+
+/* ---------- Club program buttons & logos ---------- */
+
+.org-buttons { display: grid; gap: 16px; margin-bottom: 24px; }
+@media (min-width: 800px) { .org-buttons { grid-template-columns: 1fr 1fr; } }
+.org-button {
+  --accent: var(--club);
+  display: grid; grid-template-columns: 96px 1fr; grid-template-areas: 'logo text' 'logo cta';
+  align-items: center; gap: 4px 18px; padding: 20px 22px;
+  background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow);
+  border-left: 6px solid var(--accent); color: var(--ink); text-decoration: none;
+  transition: transform .15s, box-shadow .15s;
+}
+.org-button:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgb(13 35 64 / 16%); color: var(--ink); }
+.org-button--buya { --accent: var(--buya); }
+.org-button--oak { --accent: var(--oak); }
+.org-button img { grid-area: logo; width: 96px; height: 72px; object-fit: contain; }
+.org-button__text { grid-area: text; display: grid; }
+.org-button__text strong { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; }
+.org-button__text span { color: var(--ink-soft); font-size: .92rem; }
+.org-button__cta {
+  grid-area: cta; justify-self: start; margin-top: 6px; padding: 6px 14px; border-radius: 999px;
+  background: var(--accent); color: #fff; font-weight: 700; font-size: .9rem;
+}
+
+.hero-org { display: grid; gap: 20px; align-items: center; }
+.hero-org__logo {
+  width: 180px; max-height: 140px; object-fit: contain; justify-self: start;
+  padding: 14px; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+}
+@media (min-width: 800px) {
+  .hero-org { grid-template-columns: 1fr auto; }
+  .hero-org__logo { width: 220px; max-height: 170px; justify-self: end; }
 }

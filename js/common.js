@@ -6,7 +6,8 @@ const Site = (() => {
   'use strict';
 
   const NAV_ITEMS = [
-    { href: 'index.html', label: 'Team Map', page: 'map' },
+    { href: 'index.html', label: 'Home', page: 'home' },
+    { href: 'map.html', label: 'Team Map', page: 'map' },
     { href: 'team.html', label: 'Team Lookup', page: 'team' },
     { href: 'seasons.html', label: 'Seasons', page: 'seasons' },
     { href: 'clubs.html', label: 'Club Teams', page: 'clubs' },
@@ -45,6 +46,34 @@ const Site = (() => {
     return team.affiliations ?? [team.league];
   }
 
+  /** High school teams: 'school' if registered in a 2026 BADA league, otherwise 'inactive'. */
+  function schoolStatus(team) {
+    return team.inLeague === false ? 'inactive' : 'school';
+  }
+
+  function leagueStatusBadge(team) {
+    return schoolStatus(team) === 'inactive'
+      ? '<span class="badge badge--inactive">Non-league</span>'
+      : '<span class="badge badge--school">League</span>';
+  }
+
+  /** Color key for a team: 'joint' for shared teams, 'inactive' for non-league BADA teams, else its league. */
+  function teamColor(team) {
+    if (teamOrgs(team).length > 1) return 'joint';
+    if (team.inLeague === false) return 'inactive';
+    return team.league;
+  }
+
+  const SEASON_ORDER = ['fall', 'winter', 'spring', 'summer'];
+
+  /** The seasons a team plays, in calendar order, e.g. "Fall · Spring". */
+  function teamSeasons(team) {
+    const seasons = new Set(team.divisions.map((key) => DIVISIONS[key].season));
+    return SEASON_ORDER.filter((season) => seasons.has(season))
+      .map((season) => season[0].toUpperCase() + season.slice(1))
+      .join(' · ');
+  }
+
   function orgTeams(leagueKey) {
     return TEAMS.filter((team) => teamOrgs(team).includes(leagueKey));
   }
@@ -71,7 +100,9 @@ const Site = (() => {
     return `<span class="badge badge--${leagueKey}" title="${escapeHtml(league.fullName)}">${escapeHtml(league.name)}</span>`;
   }
 
+  /** Club teams show their program(s); high school teams show League / Non-league. */
   function orgBadges(team) {
+    if (LEAGUES[team.league].category === 'school') return leagueStatusBadge(team);
     return teamOrgs(team).map(leagueBadge).join('');
   }
 
@@ -84,15 +115,17 @@ const Site = (() => {
     return `<a class="chip chip--${division.season}" href="${divisionUrl(divisionKey)}">${escapeHtml(division.label)}</a>`;
   }
 
-  /** Adds the shared basemap (soft light-gray base + separate label layer) to a Leaflet map. */
+  /**
+   * Adds the shared basemap: a colored street map. On high-DPI screens Leaflet
+   * loads the next zoom level's tiles at half size, so roads and labels stay sharp.
+   */
   function addBaseLayer(map) {
-    const esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas';
-    const options = { maxZoom: 16, keepBuffer: 4 };
-    L.tileLayer(`${esri}/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`, {
-      ...options,
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 18,
+      detectRetina: true,
+      keepBuffer: 4,
       attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors',
     }).addTo(map);
-    L.tileLayer(`${esri}/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}`, options).addTo(map);
   }
 
   /** Wires a group of [data-value] toggle buttons that behave like radio buttons. */
@@ -147,8 +180,8 @@ const Site = (() => {
           <a href="https://bayareadisc.org/youth-leagues" target="_blank" rel="noopener">Bay Area Disc</a>,
           <a href="https://www.bayultimateyouth.org/" target="_blank" rel="noopener">Bay Ultimate Youth</a> and
           <a href="https://www.oakultimate.com/home" target="_blank" rel="noopener">Oakland Ultimate</a>.
-          Last checked ${LAST_CHECKED}. Schedules change every year — always confirm with the team.</p>
-        <p>Team vibe descriptions are friendly summaries, not official statements.</p>
+          Last checked ${LAST_CHECKED}. Schedules change every year, so check with the team.</p>
+        <p>Team descriptions are our own summaries.</p>
       </div>`;
   }
 
@@ -165,6 +198,10 @@ const Site = (() => {
     findTeam,
     teamOrgs,
     orgTeams,
+    schoolStatus,
+    teamColor,
+    teamSeasons,
+    leagueStatusBadge,
     filterTeams,
     leagueBadge,
     orgBadges,

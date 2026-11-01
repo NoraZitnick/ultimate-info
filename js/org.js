@@ -9,8 +9,8 @@
   const esc = Site.escapeHtml;
 
   const SEASON_GROUPS = [
-    { season: 'winter', title: 'Winter high school club', when: 'Tryouts in October · season November – early March' },
-    { season: 'summer', title: 'Summer club (YCC)', when: 'Tryouts January – February · season June – August' },
+    { season: 'winter', title: 'Winter High School Club', when: 'Tryouts in October · season November – early March' },
+    { season: 'summer', title: 'Summer Club (YCC)', when: 'Tryouts January – February · season June – August' },
     { season: 'fall', title: 'Fall development', when: 'September – October · no tryout' },
   ];
 
@@ -21,11 +21,11 @@
   function teamCard(team, orgKey) {
     const partners = Site.teamOrgs(team).filter((key) => key !== orgKey);
     const joint = partners.length
-      ? `<span class="badge badge--ghost-dark">with ${partners.map((key) => esc(LEAGUES[key].name)).join(' & ')}</span>`
+      ? `<span class="badge badge--joint">with ${partners.map((key) => esc(LEAGUES[key].name)).join(' & ')}</span>`
       : '';
     return `
       <li>
-        <a class="team-card team-card--${orgKey}" href="${Site.teamUrl(team)}">
+        <a class="team-card team-card--${Site.teamColor(team)}" href="${Site.teamUrl(team)}">
           <span class="team-card__badges">${Site.genderBadge(team.gender)}${joint}</span>
           <span class="team-card__name">${esc(team.name)}</span>
           <span class="team-card__ages">${esc(team.ages)}</span>
@@ -56,17 +56,20 @@
 
     root.innerHTML = `
       <section class="hero hero--${orgKey}">
-        <div class="container">
-          <a class="back-link" href="index.html">← Back to map</a>
-          <div class="hero__badges">${Site.leagueBadge(orgKey)}<span class="badge badge--ghost">Club program</span></div>
-          <h1>${esc(org.fullName)}</h1>
-          <p class="hero__lead">${esc(org.about)}</p>
+        <div class="container hero-org">
+          <div>
+            <a class="back-link" href="map.html">← Back to map</a>
+            <div class="hero__badges">${Site.leagueBadge(orgKey)}<span class="badge badge--ghost">Club program</span></div>
+            <h1>${esc(org.fullName)}</h1>
+            <p class="hero__lead">${esc(org.about)}</p>
+          </div>
+          <img class="hero-org__logo" src="${esc(org.logo)}" alt="${esc(org.fullName)} logo">
         </div>
       </section>
 
       <div class="container team-layout">
         <div class="team-main">
-          <p class="result-count">${teams.length} teams · tap a team for practice schedule, vibe and contact</p>
+          <p class="result-count">${teams.length} teams</p>
           ${SEASON_GROUPS.map((group) =>
             seasonSection(group, teams.filter((team) => teamSeason(team) === group.season), orgKey)).join('')}
         </div>
@@ -101,7 +104,7 @@
     L.marker([org.spot.lat, org.spot.lng], {
       icon: L.divIcon({
         className: 'pin-anchor',
-        html: `<span class="pin pin--club pin--org">${esc(org.name)}</span>`,
+        html: `<span class="pin pin--${orgKey} pin--org">${esc(org.name)}</span>`,
         iconSize: [58, 30],
         iconAnchor: [29, 15],
       }),
@@ -114,7 +117,7 @@
     root.innerHTML = `
       <div class="container empty-state">
         <h1>Program not found</h1>
-        <p>Pick a club program:</p>
+        <p>Pick a Club program:</p>
         <div class="link-buttons link-buttons--center">
           ${clubs.map((key) => `<a class="btn" href="${Site.orgUrl(key)}">${esc(LEAGUES[key].fullName)}</a>`).join('')}
         </div>

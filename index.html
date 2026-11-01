@@ -3,64 +3,85 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Team Map · Bay Area HS Ultimate</title>
-  <meta name="description" content="Map of every Bay Area high school ultimate frisbee team in BADA, BUYA and OAK.">
+  <title>Find Your Bay Area Frisbee Community · Bay Area HS Ultimate</title>
+  <meta name="description" content="Team Lookup by BADA GURLS: explore ultimate frisbee teams across the Bay Area and find your frisbee community.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body data-page="map">
+<body data-page="home">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header" data-site-header></header>
 
-  <main id="main" class="map-page">
-    <aside class="map-panel" aria-label="Filters and team list">
-      <div class="map-panel__intro">
-        <h1>Find a team near you</h1>
-        <p>Green dots are high school teams (letter = division). Blue dots are the BUYA and OAK club programs — click one to see all its teams.</p>
-      </div>
-
-      <div class="filter-block">
-        <h2 class="filter-block__title" id="gender-label">Show</h2>
-        <div class="segmented" data-filter="gender" role="group" aria-labelledby="gender-label">
-          <button type="button" data-value="all" aria-pressed="true">All</button>
-          <button type="button" data-value="girls" aria-pressed="false">Girls</button>
-          <button type="button" data-value="open" aria-pressed="false">Open</button>
-          <button type="button" data-value="mixed" aria-pressed="false">Mixed</button>
+  <main id="main" class="page">
+    <section class="hero hero--home">
+      <div class="container hero-home">
+        <div class="hero-home__text">
+          <p class="eyebrow">Team Lookup</p>
+          <h1>Find Your Bay Area Frisbee Community!</h1>
+          <p class="hero__lead">Not sure where to play ultimate or what teams are out there? Explore every high school team in the Bay Area, whether you’re brand new or looking for your next team.</p>
+          <div class="hero-home__actions">
+            <a class="btn btn--accent" href="map.html">Open the Team Map</a>
+            <a class="btn btn--outline" href="team.html">Search teams</a>
+          </div>
         </div>
-      </div>
-
-      <div class="filter-block">
-        <h2 class="filter-block__title" id="category-label">Team type</h2>
-        <div class="league-toggles" data-filter="category" role="group" aria-labelledby="category-label"></div>
-      </div>
-
-      <div class="filter-block">
-        <label class="filter-block__title" for="team-search">Search</label>
-        <input id="team-search" class="search-input" type="search" placeholder="Team, school or city…" autocomplete="off">
-      </div>
-
-      <p class="result-count" aria-live="polite" data-result-count></p>
-      <ul class="team-list" data-team-list></ul>
-    </aside>
-
-    <section class="map-wrap" aria-label="Map of teams">
-      <div id="map" class="map"></div>
-      <div class="map-legend" aria-hidden="true">
-        <span><i class="pin pin--school pin--sm"></i>High school</span>
-        <span><i class="pin pin--club pin--sm"></i>Club</span>
-        <span class="map-legend__key">G girls · O open · M mixed</span>
+        <div class="hero-home__disc" aria-hidden="true"></div>
       </div>
     </section>
+
+    <div class="container">
+      <section class="panel" aria-labelledby="how-title">
+        <h2 id="how-title" class="panel__title">How to Use It</h2>
+        <p>Visit the <a href="team.html">Team Lookup</a> page and use the search feature to explore available teams. Browse your options, learn about the teams in your area, and find opportunities to get involved.</p>
+        <ol class="steps">
+          <li><span class="steps__num">1</span><div><h3>Search</h3><p>Look up teams by name, school or city, or browse them on the <a href="map.html">map</a>.</p></div></li>
+          <li><span class="steps__num">2</span><div><h3>Browse</h3><p>See where each team meets, when they practice, and what they’re like.</p></div></li>
+          <li><span class="steps__num">3</span><div><h3>Get involved</h3><p>Email the team contact or sign up for tryouts, and start playing.</p></div></li>
+        </ol>
+        <p>Finding a team is one of the best ways to improve your frisbee skills, meet new people, and become part of the ultimate community. We’re here to make that process a little easier!</p>
+      </section>
+
+      <section class="about" aria-labelledby="who-title">
+        <h2 id="who-title">Who We Are</h2>
+
+        <div class="about__grid">
+          <article class="panel">
+            <h3 class="panel__title">What is BADA GURLS?</h3>
+            <p>BADA GURLS is a program built to help grow the next generation of women in ultimate frisbee. It stands for <strong>Gender in Ultimate Revolution Leadership Series</strong>, and is a youth leadership initiative run by the Bay Area Disc Association (BADA) to develop young female leaders in the sport of Ultimate Frisbee.</p>
+            <p>Now in our third year, GURLS is a program within BADA focused on making ultimate frisbee more accessible, welcoming, and easier to learn for new players. We recognize that getting started in frisbee can sometimes feel overwhelming. New players often have the passion and excitement to improve but aren’t always sure where to start, what skills to work on, or where to find the resources to help them grow.</p>
+            <p class="about__callout">That’s where we come in!</p>
+            <p>Our goal is to bridge that gap by giving new players the tools, knowledge, and resources they need to develop their skills and confidence. Through guidance, skill-building resources, and a supportive community, we want to make the learning process less intimidating and help players understand what it takes to get better.</p>
+          </article>
+
+          <article class="panel">
+            <h3 class="panel__title">Our Team</h3>
+            <p>We are a group of passionate ultimate frisbee players who want to make the sport more accessible to everyone. As we enter our third year, we are continuing to build on the GURLS program and find new ways to support players at every stage of their frisbee journey.</p>
+            <p>We believe that everyone deserves the opportunity to learn, improve, and feel confident on the field. Whether you’re picking up a frisbee for the first time or looking to take your game to the next level, GURLS is here to help you find your place in the sport.</p>
+          </article>
+        </div>
+
+        <blockquote class="mission">
+          <p class="eyebrow">Our Mission</p>
+          <p>To help youth ultimate players gain more knowledge about the Bay Area scene so they feel more confident and provide access to resources to help them become better players.</p>
+        </blockquote>
+      </section>
+
+      <section aria-labelledby="explore-title">
+        <h2 id="explore-title">Explore</h2>
+        <ul class="explore-grid">
+          <li><a class="explore-card" href="map.html"><span class="explore-card__icon" aria-hidden="true">🗺️</span><strong>Team Map</strong><span>Every high school team and Club program on a map.</span></a></li>
+          <li><a class="explore-card" href="team.html"><span class="explore-card__icon" aria-hidden="true">🔎</span><strong>Team Lookup</strong><span>Search teams and see practices, location and contacts.</span></a></li>
+          <li><a class="explore-card" href="seasons.html"><span class="explore-card__icon" aria-hidden="true">📅</span><strong>Seasons</strong><span>How fall, Winter Club, spring and Summer Club work.</span></a></li>
+          <li><a class="explore-card" href="clubs.html"><span class="explore-card__icon" aria-hidden="true">🥏</span><strong>Club Teams</strong><span>BUYA and OAK teams, tryouts and registration.</span></a></li>
+        </ul>
+      </section>
+    </div>
   </main>
 
   <footer class="site-footer" data-site-footer></footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script src="js/data.js"></script>
   <script src="js/common.js"></script>
-  <script src="js/map.js"></script>
 </body>
 </html>
